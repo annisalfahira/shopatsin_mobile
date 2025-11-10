@@ -20,8 +20,11 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: "ShopAtSin"),
+      initialRoute: MyHomePage.homeRoute,
+      routes: {
+        MyHomePage.homeRoute: (context) => const MyHomePage(title: "ShopAtSin"),
+        AddProductPage.routeName: (context) => const AddProductPage(),
+      },
     );
   }
 }
-
