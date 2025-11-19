@@ -1,10 +1,17 @@
+// lib/menu.dart
+
 import 'package:flutter/material.dart';
+
+import 'package:shopatsin_mobile/screens/product_list.dart';
+import 'package:shopatsin_mobile/widgets/left_drawer.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key, required this.title});
 
   final String title;
-  static const String homeRoute = '/';
+
+  // home route khusus menu (beda dengan '/' yang dipakai login)
+  static const String homeRoute = '/home';
 
   void _showSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context)
@@ -29,19 +36,31 @@ class MyHomePage extends StatelessWidget {
         label: 'All Products',
         icon: Icons.sports_soccer,
         backgroundColor: Colors.blue,
-        onPressed: () => _showSnackBar(
-          context,
-          'You tapped the All Products button',
-        ),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const ProductListPage(
+                showOnlyMineInitial: false,
+              ),
+            ),
+          );
+        },
       ),
       _MenuButtonData(
         label: 'My Products',
         icon: Icons.shopping_bag,
         backgroundColor: Colors.green,
-        onPressed: () => _showSnackBar(
-          context,
-          'You tapped the My Products button',
-        ),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const ProductListPage(
+                showOnlyMineInitial: true,
+              ),
+            ),
+          );
+        },
       ),
       _MenuButtonData(
         label: 'Add Product',
@@ -60,7 +79,11 @@ class MyHomePage extends StatelessWidget {
         foregroundColor: Colors.white,
         title: Text(title),
       ),
-      drawer: const AppDrawer(currentRoute: MyHomePage.homeRoute),
+      drawer: const AppDrawer(
+        currentRoute: MyHomePage.homeRoute,
+        homeRoute: MyHomePage.homeRoute,
+        addProductRoute: AddProductPage.routeName,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -142,64 +165,6 @@ class _MenuButton extends StatelessWidget {
               const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 18),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class AppDrawer extends StatelessWidget {
-  const AppDrawer({super.key, required this.currentRoute});
-
-  final String currentRoute;
-
-  void _navigateTo(BuildContext context, String route) {
-    Navigator.pop(context);
-    if (currentRoute == route) return;
-
-    if (route == MyHomePage.homeRoute) {
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        MyHomePage.homeRoute,
-        (route) => false,
-      );
-    } else {
-      Navigator.pushNamed(context, route);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
-              ),
-              child: Align(
-                alignment: Alignment.bottomLeft,
-                child: Text(
-                  'ShopAtSin',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Home'),
-              onTap: () => _navigateTo(context, MyHomePage.homeRoute),
-            ),
-            ListTile(
-              leading: const Icon(Icons.add_box),
-              title: const Text('Add Product'),
-              onTap: () => _navigateTo(context, AddProductPage.routeName),
-            ),
-          ],
         ),
       ),
     );
@@ -319,7 +284,11 @@ class _AddProductPageState extends State<AddProductPage> {
         foregroundColor: Colors.white,
         title: const Text('Add New Product'),
       ),
-      drawer: const AppDrawer(currentRoute: AddProductPage.routeName),
+      drawer: const AppDrawer(
+        currentRoute: AddProductPage.routeName,
+        homeRoute: MyHomePage.homeRoute,
+        addProductRoute: AddProductPage.routeName,
+      ),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: SingleChildScrollView(
